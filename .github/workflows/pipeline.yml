@@ -101,6 +101,7 @@ jobs:
           USER: ${{ secrets.ITCHIO_USERNAME }}
           GAME: ${{ secrets.ITCHIO_GAME_SLUG }}
         run: |
+          apt-get update && apt-get install -y curl unzip
           curl -L -o butler.zip https://dl.itch.ovh/butler/linux-amd64/head/archive/default
           unzip butler.zip
           chmod +x butler
