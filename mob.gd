@@ -4,7 +4,7 @@ signal died
 
 
 var speed = randf_range(200, 300)
-var health = 3
+var health = 5
 
 @onready var player = get_node("/root/Game/Player")
 
