@@ -2,4 +2,4 @@ extends Label
 
 
 func _ready() -> void:
-	text = Version.build_ver_str()
+	text = ProjectSettings.get_setting("application/config/version")

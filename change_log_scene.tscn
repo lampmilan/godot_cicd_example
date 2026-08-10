@@ -1,0 +1,79 @@
+[gd_scene format=3 uid="uid://dq4sij4xcgk48"]
+
+[sub_resource type="GDScript" id="GDScript_nm34u"]
+script/source = "extends Control
+
+
+@onready var version_label = $Panel/VBoxContainer/VersionLabel
+@onready var version_desc = $Panel/VBoxContainer/RichTextLabel
+
+
+func _ready() -> void:
+	version_label.text = Version.build_ver_str()
+	version_desc.text = ChangeLog.CHANGELOG
+
+
+func show_changelog() -> void:
+	visible = true
+
+func hide_changelog() -> void:
+	visible = false
+"
+
+[node name="ChangeLogScene" type="Control" unique_id=1919192690]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_nm34u")
+
+[node name="Panel" type="Panel" parent="." unique_id=1983202132]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -342.0
+offset_top = -270.0
+offset_right = 342.0
+offset_bottom = 270.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="Panel" unique_id=628464278]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -28.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 41.0
+grow_horizontal = 0
+text = "X"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel" unique_id=1796383902]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 35.0
+offset_top = 31.0
+offset_right = -35.0
+offset_bottom = -31.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VersionLabel" type="Label" parent="Panel/VBoxContainer" unique_id=853126107]
+layout_mode = 2
+text = "Version 0.0.0"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Panel/VBoxContainer" unique_id=56524074]
+layout_mode = 2
+size_flags_vertical = 3
+text = "This is a version"
+
+[connection signal="pressed" from="Panel/Button" to="." method="hide_changelog"]
