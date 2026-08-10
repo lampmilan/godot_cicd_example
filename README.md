@@ -15,9 +15,10 @@ To demonstrate this, the repository includes a purposefully failed Pull Request 
 * **The Hidden Bug:** A unit test (test_mob.gd) explicitly verified that a standard mob takes exactly 3 standard player attacks to die.
 *  **The Pipeline Reaction:** When the branch was pushed, GitHub Actions ran the CI suite. GUT caught the balance mismatch and failed:
 ```Plaintext
-    test_mob_takes_three_hits_to_die (res://tests/test_mob.gd) ... FAIL
-        Expected health after 3 standard player attacks to be 0, but got 2.
-        Assertion failed: Expected [0], got [2].
+    res://test/test_mob.gd
+* test_mob_starts_with_three_health
+    [Failed]:  [5] expected to equal [3]:  
+      at line 27
 ```
 ### Setting Up Your Own Pipeline
 To use this workflow in your own Godot repository, you need to configure three repository secrets on GitHub (Settings -> Secrets and variables -> Actions):
