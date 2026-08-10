@@ -1,0 +1,27 @@
+name: CI - Lint & Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  ci:
+    name: Lint & Unit Tests
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.7.1
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run GDScript Linter
+        run: |
+          godot --headless -s res://addons/gdscript-linter/analyzer/analyze-cli.gd
+
+      - name: Run GUT Unit Tests
+        run: |
+          godot --headless -s addons/gut/gut_cmdln.gd
