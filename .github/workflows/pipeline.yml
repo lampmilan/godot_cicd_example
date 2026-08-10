@@ -24,6 +24,9 @@ jobs:
         with:
           lfs: true
 
+      - name: Pre-Import Assets
+        run: godot --headless --editor --quit || true
+
       - name: Run GDScript Linter
         run: |
           godot --headless -s res://addons/gdscript-linter/analyzer/analyze-cli.gd
