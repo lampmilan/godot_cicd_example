@@ -67,6 +67,9 @@ jobs:
         with:
           lfs: true
 
+      - name: Pre-Import Assets
+        run: godot --headless --editor --quit || true
+
       - name: Inject Git Tag into project.godot
         shell: bash
         run: |
