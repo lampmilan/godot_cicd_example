@@ -105,4 +105,4 @@ jobs:
           curl -L -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
           unzip butler.zip
           chmod +x butler
-          ./butler push build/web $ITCH_USER/$ITCH_GAME:web
+          ./butler push build/web brewed-by-papi/godot-ci-cd-example:web
