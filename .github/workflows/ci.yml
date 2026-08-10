@@ -12,7 +12,7 @@ jobs:
     name: Lint & Unit Tests
     runs-on: ubuntu-latest
     container:
-      image: barichello/godot-ci:v4.7.1
+      image: barichello/godot-ci:4.7.1
 
     steps:
       - name: Checkout Code
