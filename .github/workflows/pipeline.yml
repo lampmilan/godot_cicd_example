@@ -3,6 +3,7 @@ name: Godot CI/CD Pipeline
 on:
   push:
     branches: [ "main" ]
+    tags: [ "*" ]
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
@@ -20,6 +21,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Run GDScript Linter
         run: |
@@ -28,6 +31,17 @@ jobs:
       - name: Run GUT Unit Tests
         run: |
           godot --headless -s addons/gut/gut_cmdln.gd
+
+      - name: Setup Export Templates
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates
+          mv /root/.local/share/godot/export_templates/4.7.1.stable ~/.local/share/godot/export_templates/4.7.1.stable
+
+      - name: Import Assets & Test Web Build
+        run: |
+          godot --headless --editor --quit || true
+          mkdir -p build/test
+          godot --headless --export-release "Web" build/test/index.html
 
   # -------------------------------------------------------------
   # STAGE 2: Continuous Delivery (Export & Deploy)
@@ -41,48 +55,26 @@ jobs:
     # Ensures CD runs ONLY if the CI job completes successfully
     needs: ci
 
-    # Skip CD on Pull Requests; only run on pushes to main or manual triggers
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
+    # Only run CD if triggered by a Git Tag
+    if: startsWith(github.ref, 'refs/tags/')
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
-      - name: Extract Version from Tag
-        id: get_version
+      - name: Inject Git Tag into project.godot
         shell: bash
         run: |
-          # If triggered by a git tag v1.2.3, strip 'v'. Otherwise, fallback to 0.1.<github_run_number>
-          TAG_NAME="${GITHUB_REF_NAME}"
-          if [[ $TAG_NAME =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            VERSION="${TAG_NAME#v}"
-          else
-            VERSION="0.1.${{ github.run_number }}"
-          fi
-
-          # Split X.Y.Z into individual variables
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
-
-          echo "MAJOR=$MAJOR" >> $GITHUB_OUTPUT
-          echo "MINOR=$MINOR" >> $GITHUB_OUTPUT
-          echo "PATCH=$PATCH" >> $GITHUB_OUTPUT
-          echo "Full Version: $VERSION (Major: $MAJOR, Minor: $MINOR, Patch: $PATCH)"
-
-      - name: Update version.gd
-        run: |
-          VERSION_FILE="VERSION.gd"  # Path to your Version class GDScript file
-
-          sed -i 's/const MAJOR: int = .*/const MAJOR: int = ${{ steps.get_version.outputs.MAJOR }}/' "$VERSION_FILE"
-          sed -i 's/const MINOR: int = .*/const MINOR: int = ${{ steps.get_version.outputs.MINOR }}/' "$VERSION_FILE"
-          sed -i 's/const PATCH: int = .*/const PATCH: int = ${{ steps.get_version.outputs.PATCH }}/' "$VERSION_FILE"
-
-          echo "Updated $VERSION_FILE:"
-          cat "$VERSION_FILE"
-
-      - name: Update project.godot Version
-        run: |
-          # Updates config/version="X.Y.Z" in project.godot
-          sed -i 's/config\/version=.*/config\/version="${{ steps.get_version.outputs.MAJOR }}.${{ steps.get_version.outputs.MINOR }}.${{ steps.get_version.outputs.PATCH }}"/' project.godot
+          # Retrieve whatever tag string triggered the workflow
+          # (e.g. "0.1.0", "v.0.1.0", "2026.08.10", "playtest-alpha")
+          BUILD_VERSION="${GITHUB_REF_NAME}"
+          
+          echo "Injecting Version: $BUILD_VERSION"
+          
+          # Replace config/version inside project.godot for this build run only
+          sed -i 's/config\/version=.*/config\/version="'"$BUILD_VERSION"'"/' project.godot
 
       - name: Setup Export Templates
         run: |
@@ -98,11 +90,11 @@ jobs:
       - name: Deploy to Itch.io via Butler
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_CREDENTIALS }}
-          USER: ${{ secrets.ITCHIO_USERNAME }}
-          GAME: ${{ secrets.ITCHIO_GAME_SLUG }}
+          ITCH_USER: ${{ secrets.ITCHIO_USERNAME }}
+          ITCH_GAME: ${{ secrets.ITCHIO_GAME_SLUG }}
         run: |
           apt-get update && apt-get install -y curl unzip
           curl -L -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
           unzip butler.zip
           chmod +x butler
-          ./butler push build/web $USER/$GAME:web
+          ./butler push build/web brewed-by-papi/godot-ci-cd-example:web
