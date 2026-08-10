@@ -31,6 +31,17 @@ jobs:
         run: |
           godot --headless -s addons/gut/gut_cmdln.gd
 
+      - name: Setup Export Templates
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates
+          mv /root/.local/share/godot/export_templates/4.7.1.stable ~/.local/share/godot/export_templates/4.7.1.stable
+
+      - name: Import Assets & Test Web Build
+        run: |
+          godot --headless --editor --quit || true
+          mkdir -p build/test
+          godot --headless --export-release "Web" build/test/index.html
+
   # -------------------------------------------------------------
   # STAGE 2: Continuous Delivery (Export & Deploy)
   # -------------------------------------------------------------
