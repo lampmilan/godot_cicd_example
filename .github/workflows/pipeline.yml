@@ -98,11 +98,11 @@ jobs:
       - name: Deploy to Itch.io via Butler
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_CREDENTIALS }}
-          USER: ${{ secrets.ITCHIO_USERNAME }}
-          GAME: ${{ secrets.ITCHIO_GAME_SLUG }}
+          ITCH_USER: ${{ secrets.ITCHIO_USERNAME }}
+          ITCH_GAME: ${{ secrets.ITCHIO_GAME_SLUG }}
         run: |
           apt-get update && apt-get install -y curl unzip
           curl -L -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
           unzip butler.zip
           chmod +x butler
-          ./butler push build/web $USER/$GAME:web
+          ./butler push build/web $ITCH_USER/$ITCH_GAME:web
