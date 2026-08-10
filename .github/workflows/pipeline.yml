@@ -70,7 +70,7 @@ jobs:
 
       - name: Update version.gd
         run: |
-          VERSION_FILE="version.gd"  # Path to your Version class GDScript file
+          VERSION_FILE="VERSION.gd"  # Path to your Version class GDScript file
 
           sed -i 's/const MAJOR: int = .*/const MAJOR: int = ${{ steps.get_version.outputs.MAJOR }}/' "$VERSION_FILE"
           sed -i 's/const MINOR: int = .*/const MINOR: int = ${{ steps.get_version.outputs.MINOR }}/' "$VERSION_FILE"
