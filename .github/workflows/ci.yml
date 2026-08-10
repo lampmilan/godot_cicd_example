@@ -20,7 +20,7 @@ jobs:
 
       - name: Run GDScript Linter
         run: |
-          godot --headless -s addons/godot-gdscript-linter/linter.gd
+          godot --headless -s res://addons/gdscript-linter/analyzer/analyze-cli.gd
 
       - name: Run GUT Unit Tests
         run: |
