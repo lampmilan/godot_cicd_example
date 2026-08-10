@@ -50,6 +50,7 @@ jobs:
 
       - name: Extract Version from Tag
         id: get_version
+        shell: bash
         run: |
           # If triggered by a git tag v1.2.3, strip 'v'. Otherwise, fallback to 0.1.<github_run_number>
           TAG_NAME="${GITHUB_REF_NAME}"
