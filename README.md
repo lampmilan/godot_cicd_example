@@ -1,3 +1,5 @@
+To test this system in a semi real-world scenario, I used GDQuest's "Your First Vampire Survival Game" template.
+
 A simple Continuous Integration and Continuous Delivery (CI/CD) pipeline example for Godot using GitHub Actions and Itch.io Butler.
 
 * **Automated Linting:** Runs GDScript static code analysis on every push and pull request.
@@ -28,9 +30,9 @@ To use this workflow in your own Godot repository, you need to configure three r
 
 ### Triggering a Release
 
-Daily Development: Push code to main or open Pull Requests to run linting and unit tests automatically.
+**Daily Development:** Push code to main or open Pull Requests to run linting and unit tests automatically.
 
-Publishing to Itch.io: When you are ready to ship a build, create and push a Git tag:
+**Publishing to Itch.io:** When you are ready to ship a build, create and push a Git tag:
 ```Bash
 git tag 0.1.0
 git push origin 0.1.0
